@@ -62,10 +62,10 @@ llm = ChatOpenAI(openai_api_key=api_key, temperature=0.1, streaming=True, callba
 @st.cache_resource(show_spinner="Embedding file...")
 def embed_file(file):
     file_content = file.read()
-    file_path = f"./data/files/{file.name}"
+    file_path = f"./.cache/files/{file.name}"
     with open(file_path, "wb") as f:
         f.write(file_content)
-    cache_dir = LocalFileStore(f"./data/embeddings/{file.name}")
+    cache_dir = LocalFileStore(f"./.cache/embeddings/{file.name}")
     splitter = CharacterTextSplitter.from_tiktoken_encoder(
         separator="\n",
         chunk_size=600,
