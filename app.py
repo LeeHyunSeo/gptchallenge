@@ -9,6 +9,7 @@ from langchain.schema.runnable import RunnableLambda, RunnablePassthrough
 from langchain_openai import ChatOpenAI
 from langchain.callbacks.base import BaseCallbackHandler
 import streamlit as st
+import os
 
 class ChatCallbackHandler(BaseCallbackHandler):
 
@@ -48,14 +49,15 @@ with st.sidebar:
     if st.button("Save API Key"):
         if openai_api_key:
             st.session_state["openai_api_key"] = openai_api_key
-            
+            os.environ["OPENAI_API_KEY"] = openai_api_key
             st.success("API Key saved successfully!")
         else:
             st.error("Please enter a valid API Key.")
 
     file = st.file_uploader("Upload a .txt .pdf or  .docx file", type =["pdf", "docx", "txt"])
 
-llm = ChatOpenAI(openai_api_key=st.session_state["openai_api_key"], temperature=0.1, streaming=True, callbacks=[ChatCallbackHandler()])
+api_key = os.getenv("OPENAI_API_KEY", st.session_state.get("openai_api_key", ""))
+llm = ChatOpenAI(openai_api_key=api_key, temperature=0.1, streaming=True, callbacks=[ChatCallbackHandler()])
 
 @st.cache_resource(show_spinner="Embedding file...")
 def embed_file(file):
